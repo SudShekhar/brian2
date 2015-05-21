@@ -87,7 +87,7 @@ script:
 after_success:
 - if [[ $CONDA_BUILD == 'yes' ]]; then
     python dev/continuous-integration/move-conda-package.py dev/conda-recipe &&
-    binstar -t $BINSTAR_TOKEN upload --force *.tar.bz2;
+    python dev/continuous-integration/binstar-push.py
   elif [[ $REPORT_COVERAGE == 'yes' ]]; then
     cp .coverage $SRCDIR;
     cd $SRCDIR;
