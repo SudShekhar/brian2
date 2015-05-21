@@ -5,21 +5,21 @@ package:
 # Note: specifying a minimal version for numyp leads to incorrect build strings
 requirements:
   build:
-    - python
-    - cython
+    - python >=2.7
+    - cython >=0.18
     - setuptools >=6.0
-    - numpy
+    - numpy >=1.8.0
     - sympy >=0.7.6
     - pyparsing
     - jinja2 >=2.7
 
   run:
-    - python
-    - numpy
+    - python >=2.7
+    - numpy >=1.8.0
     - sympy >=0.7.6
     - pyparsing
     - scipy >=0.13.3 # since there's no weave package in conda yet
-    - cython
+    - cython >=0.18
     - jinja2 >=2.7
     - setuptools >=6.0
 
