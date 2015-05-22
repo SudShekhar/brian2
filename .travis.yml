@@ -52,7 +52,9 @@ before_install:
     wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$ARCHITECTURE.sh -O miniconda.sh;
   fi
 - chmod +x miniconda.sh
-- ./miniconda.sh -b
+# When we are installing the 32 Bit conda on a 64 Bit system, the miniconda
+# installer will ask for a "yes" despite the -b flag, so we pipe in a yes
+- yes | ./miniconda.sh -b
 - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then export PATH=/home/travis/miniconda/bin:$PATH; else export PATH=/home/travis/miniconda3/bin:$PATH; fi
 # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
 - sudo rm -rf /dev/shm
