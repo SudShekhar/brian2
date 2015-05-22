@@ -4,6 +4,14 @@ env:
   global:
     secure: LrcmidxI4ngzv4YTEceD6Yt3lVjgJi0KhgIHWTW9lN2h9ZQdJhLL9nzc8NPblbKvRkbniGPblozY4L1Wn4ZwdRX18Tz9n4rOUB4HOm7DJHSFt9uEG75R8iNgnkoSfSGTW0rlGIm648PDnO+lRllmiBo5Pkqj2aSBNo/fnEKRpI4=
 
+# Install packages for cross-compilation to 32 Bit
+addons:
+  apt:
+    packages:
+    - gcc-multilib
+    - g++-multilib
+    - lib32z1
+
 matrix:
   include:
       # test that the documentation can be built from the tarball -- we
@@ -26,15 +34,23 @@ matrix:
 #    - python: "2.7"  # test without installed cython
 #      env: STANDALONE=no CYTHON=no MINIMAL_VERSIONS=no REPORT_COVERAGE=no
     - python: "2.7"
-      env: CONDA_BUILD=yes CONDA_PY="27" CONDA_NPY="19"
+      env: CONDA_BUILD=yes CONDA_PY="27" CONDA_NPY="19" ARCHITECTURE="x86_64"
     - python: "3.4"
-      env: CONDA_BUILD=yes CONDA_PY="34" CONDA_NPY="19"
+      env: CONDA_BUILD=yes CONDA_PY="34" CONDA_NPY="19" ARCHITECTURE="x86_64"
+    - python: "2.7"
+      env: CONDA_BUILD=yes CONDA_PY="27" CONDA_NPY="19" ARCHITECTURE="x86"
+    - python: "3.4"
+      env: CONDA_BUILD=yes CONDA_PY="34" CONDA_NPY="19" ARCHITECTURE="x86"
 
 # Use miniconda to install binary versions of numpy etc. from continuum
 # analytic's repository. Follows an approach described by Dan Blanchard:
 # https://gist.github.com/dan-blanchard/7045057
 before_install:
-- if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh; else wget http://repo.continuum.io/miniconda/Miniconda3-3.7.3-Linux-x86_64.sh -O miniconda.sh; fi
+- if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then
+    wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-$ARCHITECTURE.sh -O miniconda.sh;
+    else
+    wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$ARCHITECTURE.sh -O miniconda.sh;
+  fi
 - chmod +x miniconda.sh
 - ./miniconda.sh -b
 - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then export PATH=/home/travis/miniconda/bin:$PATH; else export PATH=/home/travis/miniconda3/bin:$PATH; fi
