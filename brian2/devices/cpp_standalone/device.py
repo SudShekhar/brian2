@@ -265,12 +265,15 @@ class CPPStandaloneDevice(Device):
     def fill_with_array(self, var, arr):
         arr = np.asarray(arr)
         array_name = self.get_array_name(var, access_data=False)
-        if arr.shape == ():
+        if arr.shape == () and var.size == 1:
+            value = CPPNodeRenderer().render_expr(repr(arr.item(0)))
             # For a single assignment, generate a code line instead of storing the array
             self.main_queue.append(('set_by_single_value', (array_name,
                                                             0,
-                                                            arr.item(0))))
+                                                            value)))
         else:
+            if arr.shape == ():
+                arr = np.repeat(arr, var.size)
             # Using the std::vector instead of a pointer to the underlying
             # data for dynamic arrays is fast enough here and it saves us some
             # additional work to set up the pointer
@@ -290,10 +293,11 @@ class CPPStandaloneDevice(Device):
 
         if (isinstance(item, int) or (isinstance(item, np.ndarray) and item.shape==())) and value.size == 1:
             array_name = self.get_array_name(variableview.variable, access_data=False)
+            value = CPPNodeRenderer().render_expr(repr(np.asarray(value).item(0)))
             # For a single assignment, generate a code line instead of storing the array
             self.main_queue.append(('set_by_single_value', (array_name,
                                                             item,
-                                                            float(value))))
+                                                            value)))
 
         elif (value.size == 1 and
               item == 'True' and
