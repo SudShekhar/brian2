@@ -29,6 +29,7 @@
     cdef int i_pivot
     cdef double pivot_magnitude
     cdef double pivot_factor
+    cdef double value
     cdef double tmp
 
     _vectorisation_idx = 1
@@ -143,11 +144,13 @@
 
         # Deal with rows below
         for _j in range(_i+1, _n_segments):
-            pivot_factor = {{_P}}[_j*_n_segments + _i]/{{_P}}[_i*_n_segments + _i]
-            for _k in range(_i+1, _n_segments):
-                {{_P}}[_j*_n_segments + _k] -= {{_P}}[_i*_n_segments + _k]*pivot_factor
-            {{_B}}[_j] -= {{_B}}[_i]*pivot_factor
-            {{_P}}[_j*_n_segments + _i] = 0
+            value = {{_P}}[_j*_n_segments + _i]
+            if value != 0.0:
+                pivot_factor = {{_P}}[_j*_n_segments + _i]/{{_P}}[_i*_n_segments + _i]
+                for _k in range(_i+1, _n_segments):
+                    {{_P}}[_j*_n_segments + _k] -= {{_P}}[_i*_n_segments + _k]*pivot_factor
+                {{_B}}[_j] -= {{_B}}[_i]*pivot_factor
+                {{_P}}[_j*_n_segments + _i] = 0
 
     # Back substitution
     for _i in range(_n_segments-1, -1, -1):
